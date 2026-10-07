@@ -4,9 +4,9 @@ Yemeğin adını yazınca tarifini, fotoğrafını, malzemelerini ve püf noktal
 
 Veriler hazır bir API'den değil, **Python `requests` ile indirilen HTML sayfalarının `BeautifulSoup` ile okunmasıyla** elde ediliyor.
 
-**🔗 Canlı site:** <!-- RENDER_LINKI --> _(Render'a yükledikten sonra linki buraya yazın)_
+**🔗 Canlı site:** https://tarif-kaziyici.onrender.com
 
-**📂 Kodlar:** bu GitHub sayfası
+**📂 Kodlar:** https://github.com/Egemen-Al/yemek
 
 > Canlı site ücretsiz sunucuda çalıştığı için bir süre kullanılmazsa uykuya geçer; ilk açılışta yaklaşık **1 dakika** bekletebilir, sonrası hızlıdır.
 

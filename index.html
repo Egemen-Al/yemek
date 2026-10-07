@@ -190,17 +190,20 @@
     font-weight: 700; font-size: 1rem;
   }
   .sekme:hover { color: var(--kobalt); }
-  /* NOT: Hangi sekmenin seçili olduğu <body data-sekme="ad|malzeme"> özelliğinde tutulur.
+  /* NOT: Kimlik ve sınıf adlarında "ad", "ads", "banner", "sponsor" gibi kelimeler KULLANMA.
+     Reklam engelleyiciler (EasyList) bunları reklam sanıp gizliyor; örneğin "panelAd"
+     kimliği engelleyicinin "###panelAd" kuralına takıldığı için arama kutusu kayboluyordu.
+     Hangi sekmenin seçili olduğu <body data-sekme="isim|malzeme"> özelliğinde tutulur.
      Seçili sekmenin görünümü, açık panel ve sonuç bölümleri hep bu TEK bilgiden türetilir;
      böylece "sekme seçili ama paneli kayıp" gibi bir uyumsuzluk oluşamaz. */
-  body[data-sekme="ad"] #sekmeAd,
+  body[data-sekme="isim"] #sekmeIsim,
   body[data-sekme="malzeme"] #sekmeMalzeme { background: var(--yuzey); color: var(--kobalt); }
-  body[data-sekme="ad"] #panelMalzeme,
-  body[data-sekme="malzeme"] #panelAd,
-  body[data-sekme="ad"] #oneriBolum,
+  body[data-sekme="isim"] #panelMalzeme,
+  body[data-sekme="malzeme"] #panelIsim,
+  body[data-sekme="isim"] #oneriBolum,
   body[data-sekme="malzeme"] #benzerBolum,
-  body[data-sekme="ad"] #tarif[data-sekme="malzeme"],
-  body[data-sekme="malzeme"] #tarif[data-sekme="ad"] { display: none !important; }
+  body[data-sekme="isim"] #tarif[data-sekme="malzeme"],
+  body[data-sekme="malzeme"] #tarif[data-sekme="isim"] { display: none !important; }
   .sekmeler + .arama-kutu { border-top-left-radius: 0; }
 
   /* ---------- MALZEME ETİKETLERİ (çip) ---------- */
@@ -256,20 +259,20 @@
   }
 </style>
 </head>
-<body data-sekme="ad">
+<body data-sekme="isim">
 
 <!-- ===================== ÇİNİ BAŞLIK + SEKMELER ===================== -->
 <header class="cini-bant">
   <div class="kap">
     <div class="sekmeler" role="tablist" aria-label="Arama türü">
-      <button class="sekme" role="tab" id="sekmeAd" aria-controls="panelAd" aria-selected="true" type="button">Yemek adıyla ara</button>
+      <button class="sekme" role="tab" id="sekmeIsim" aria-controls="panelIsim" aria-selected="true" type="button">Yemek adıyla ara</button>
       <button class="sekme" role="tab" id="sekmeMalzeme" aria-controls="panelMalzeme" aria-selected="false" type="button" tabindex="-1">Elimdekilerle öner</button>
     </div>
     <div class="arama-kutu">
       <h1>Tarif Kazıyıcı</h1>
 
       <!-- ===== 1. SEKME: YEMEK ADIYLA ARA ===== -->
-      <div id="panelAd" role="tabpanel" aria-labelledby="sekmeAd">
+      <div id="panelIsim" role="tabpanel" aria-labelledby="sekmeIsim">
         <p>Yemeğin adını yaz; tarifini, fotoğrafını, malzemelerini ve püf noktalarını
           <a href="https://yemek.com/tarif/" target="_blank" rel="noopener">yemek.com</a>'dan getirsin.</p>
 
@@ -366,7 +369,7 @@
   //  DEĞİŞKENLER
   // ============================================================
   let gecmis = [];       // Daha önce bulunan tarifler (tarifler.json)
-  let aktifSekme = "ad"; // Açık sekme: "ad" (yemek adıyla ara) ya da "malzeme" (elimdekilerle öner)
+  let aktifSekme = "isim"; // Açık sekme: "isim" (yemek adıyla ara) ya da "malzeme" (elimdekilerle öner)
   let yayin = null;      // Açık olan canlı bağlantı (EventSource)
 
   const $ = (id) => document.getElementById(id);
@@ -526,7 +529,7 @@
     if (yayin) yayin.close();
 
     $("bulBtn").disabled = true;
-    durumGoster(`“${isim}” aranıyor…`, false, "ad");
+    durumGoster(`“${isim}” aranıyor…`, false, "isim");
     benzerleriCiz([]);
     let tarifGeldi = false;
 
@@ -538,13 +541,13 @@
     yayin = new EventSource("/api/ara?isim=" + encodeURIComponent(isim));
     const bitir = () => { if (yayin) yayin.close(); yayin = null; $("bulBtn").disabled = false; };
 
-    // NOT: Mesajlarda "ad" sekmesi belirtiliyor; kullanıcı arama sürerken diğer sekmeye
+    // NOT: Mesajlarda "isim" sekmesi belirtiliyor; kullanıcı arama sürerken diğer sekmeye
     // geçerse arama arka planda biter ama o sekmenin ekranına karışmaz.
-    yayin.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj, false, "ad"));
+    yayin.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj, false, "isim"));
     yayin.addEventListener("tarif", (ev) => {
       tarifGeldi = true;
       const t = JSON.parse(ev.data);
-      if (aktifSekme === "ad") {
+      if (aktifSekme === "isim") {
         tarifiGoster(t);
         durumGoster("");
       } else {
@@ -554,11 +557,11 @@
       }
     });
     yayin.addEventListener("benzerler", (ev) => benzerleriCiz(JSON.parse(ev.data)));
-    yayin.addEventListener("bitti", () => { durumGoster("", false, "ad"); bitir(); dizinDurumunuSor(); });
-    yayin.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true, "ad"); bitir(); });
+    yayin.addEventListener("bitti", () => { durumGoster("", false, "isim"); bitir(); dizinDurumunuSor(); });
+    yayin.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true, "isim"); bitir(); });
     yayin.onerror = () => {
       if (!yayin) return;
-      if (!tarifGeldi) durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true, "ad");
+      if (!tarifGeldi) durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true, "isim");
       bitir();
     };
   }
@@ -571,24 +574,24 @@
   //  SEKMELER
   // ============================================================
   // NOT: Sekme değişince ilgili panel ve sonuç bölümleri açılır, diğerleri gizlenir
-  function sekmeAc(ad) {
-    aktifSekme = ad;
-    document.body.dataset.sekme = ad;   // görünüm (CSS) bu tek bilgiye göre değişir
+  function sekmeAc(sekme) {
+    aktifSekme = sekme;
+    document.body.dataset.sekme = sekme;   // görünüm (CSS) bu tek bilgiye göre değişir
     // Ekran okuyucular için hangi sekmenin seçili olduğunu da yaz
-    $("sekmeAd").setAttribute("aria-selected", ad === "ad");
-    $("sekmeMalzeme").setAttribute("aria-selected", ad === "malzeme");
-    $("sekmeAd").tabIndex = ad === "ad" ? 0 : -1;
-    $("sekmeMalzeme").tabIndex = ad === "malzeme" ? 0 : -1;
+    $("sekmeIsim").setAttribute("aria-selected", sekme === "isim");
+    $("sekmeMalzeme").setAttribute("aria-selected", sekme === "malzeme");
+    $("sekmeIsim").tabIndex = sekme === "isim" ? 0 : -1;
+    $("sekmeMalzeme").tabIndex = sekme === "malzeme" ? 0 : -1;
     durumGoster("");
-    (ad === "ad" ? $("isim") : $("malzemeGir")).focus();
+    (sekme === "isim" ? $("isim") : $("malzemeGir")).focus();
   }
-  $("sekmeAd").addEventListener("click", () => sekmeAc("ad"));
+  $("sekmeIsim").addEventListener("click", () => sekmeAc("isim"));
   $("sekmeMalzeme").addEventListener("click", () => sekmeAc("malzeme"));
   // Klavyeyle sağ/sol ok tuşlarıyla sekme değiştirme
   document.querySelector(".sekmeler").addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-      sekmeAc(aktifSekme === "ad" ? "malzeme" : "ad");
-      $(aktifSekme === "ad" ? "sekmeAd" : "sekmeMalzeme").focus();
+      sekmeAc(aktifSekme === "isim" ? "malzeme" : "isim");
+      $(aktifSekme === "isim" ? "sekmeIsim" : "sekmeMalzeme").focus();
     }
   });
 
