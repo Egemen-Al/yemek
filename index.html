@@ -190,7 +190,17 @@
     font-weight: 700; font-size: 1rem;
   }
   .sekme:hover { color: var(--kobalt); }
-  .sekme[aria-selected="true"] { background: var(--yuzey); color: var(--kobalt); }
+  /* NOT: Hangi sekmenin seçili olduğu <body data-sekme="ad|malzeme"> özelliğinde tutulur.
+     Seçili sekmenin görünümü, açık panel ve sonuç bölümleri hep bu TEK bilgiden türetilir;
+     böylece "sekme seçili ama paneli kayıp" gibi bir uyumsuzluk oluşamaz. */
+  body[data-sekme="ad"] #sekmeAd,
+  body[data-sekme="malzeme"] #sekmeMalzeme { background: var(--yuzey); color: var(--kobalt); }
+  body[data-sekme="ad"] #panelMalzeme,
+  body[data-sekme="malzeme"] #panelAd,
+  body[data-sekme="ad"] #oneriBolum,
+  body[data-sekme="malzeme"] #benzerBolum,
+  body[data-sekme="ad"] #tarif[data-sekme="malzeme"],
+  body[data-sekme="malzeme"] #tarif[data-sekme="ad"] { display: none !important; }
   .sekmeler + .arama-kutu { border-top-left-radius: 0; }
 
   /* ---------- MALZEME ETİKETLERİ (çip) ---------- */
@@ -246,7 +256,7 @@
   }
 </style>
 </head>
-<body>
+<body data-sekme="ad">
 
 <!-- ===================== ÇİNİ BAŞLIK + SEKMELER ===================== -->
 <header class="cini-bant">
@@ -282,7 +292,7 @@
       </div>
 
       <!-- ===== 2. SEKME: ELİMDEKİLERLE ÖNER ===== -->
-      <div id="panelMalzeme" role="tabpanel" aria-labelledby="sekmeMalzeme" hidden>
+      <div id="panelMalzeme" role="tabpanel" aria-labelledby="sekmeMalzeme">
         <p>Evde ne varsa ekle; bunlarla yapabileceğin yemekleri, neyin eksik olduğuyla birlikte göstersin.</p>
 
         <form class="arama-form" id="malzemeForm">
@@ -356,6 +366,7 @@
   //  DEĞİŞKENLER
   // ============================================================
   let gecmis = [];       // Daha önce bulunan tarifler (tarifler.json)
+  let aktifSekme = "ad"; // Açık sekme: "ad" (yemek adıyla ara) ya da "malzeme" (elimdekilerle öner)
   let yayin = null;      // Açık olan canlı bağlantı (EventSource)
 
   const $ = (id) => document.getElementById(id);
@@ -380,11 +391,15 @@
   // ============================================================
   //  DURUM MESAJI
   // ============================================================
-  function durumGoster(metin, hata = false) {
+  // NOT: "sekme" verilirse mesaj sadece o sekme açıkken gösterilir. Böylece arka planda
+  // süren bir öneri, sen "Yemek adıyla ara" sekmesine geçtiğinde oraya mesaj yazmaz.
+  function durumGoster(metin, hata = false, sekme = null) {
+    if (sekme && sekme !== aktifSekme) return;
     $("durum").hidden = !metin;
     $("durum").classList.toggle("hata", hata);
     $("durumYazi").textContent = metin || "";
   }
+
 
   // ============================================================
   //  TARİFİ ÇİZ
@@ -438,6 +453,7 @@
       <div class="tarif-alt"><a class="kaynak" href="${guvenli(t.url)}" target="_blank" rel="noopener">Tarifin yemek.com sayfasını aç</a>${
         eksikler ? '<button class="geri" type="button" onclick="$(\'oneriBolum\').scrollIntoView({behavior:\'smooth\'})">Diğer önerilere dön</button>' : ""}</div>`;
     $("tarif").hidden = false;
+    $("tarif").dataset.sekme = aktifSekme;   // tarif hangi sekmede açıldıysa orada görünür
     // Animasyonu her yeni tarifte tekrar oynat
     $("tarif").style.animation = "none"; void $("tarif").offsetWidth; $("tarif").style.animation = "";
     if (kaydir) $("tarif").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -510,7 +526,7 @@
     if (yayin) yayin.close();
 
     $("bulBtn").disabled = true;
-    durumGoster(`“${isim}” aranıyor…`);
+    durumGoster(`“${isim}” aranıyor…`, false, "ad");
     benzerleriCiz([]);
     let tarifGeldi = false;
 
@@ -522,18 +538,27 @@
     yayin = new EventSource("/api/ara?isim=" + encodeURIComponent(isim));
     const bitir = () => { if (yayin) yayin.close(); yayin = null; $("bulBtn").disabled = false; };
 
-    yayin.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj));
+    // NOT: Mesajlarda "ad" sekmesi belirtiliyor; kullanıcı arama sürerken diğer sekmeye
+    // geçerse arama arka planda biter ama o sekmenin ekranına karışmaz.
+    yayin.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj, false, "ad"));
     yayin.addEventListener("tarif", (ev) => {
       tarifGeldi = true;
-      tarifiGoster(JSON.parse(ev.data));
-      durumGoster("");
+      const t = JSON.parse(ev.data);
+      if (aktifSekme === "ad") {
+        tarifiGoster(t);
+        durumGoster("");
+      } else {
+        // Başka sekmedeyse tarifi sadece "Daha önce bulduğun tarifler"e ekle
+        gecmis = [t, ...gecmis.filter((x) => x.url !== t.url)];
+        gecmisiCiz();
+      }
     });
     yayin.addEventListener("benzerler", (ev) => benzerleriCiz(JSON.parse(ev.data)));
-    yayin.addEventListener("bitti", () => { durumGoster(""); bitir(); dizinDurumunuSor(); });
-    yayin.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true); bitir(); });
+    yayin.addEventListener("bitti", () => { durumGoster("", false, "ad"); bitir(); dizinDurumunuSor(); });
+    yayin.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true, "ad"); bitir(); });
     yayin.onerror = () => {
       if (!yayin) return;
-      if (!tarifGeldi) durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true);
+      if (!tarifGeldi) durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true, "ad");
       bitir();
     };
   }
@@ -546,19 +571,15 @@
   //  SEKMELER
   // ============================================================
   // NOT: Sekme değişince ilgili panel ve sonuç bölümleri açılır, diğerleri gizlenir
-  let aktifSekme = "ad";
   function sekmeAc(ad) {
     aktifSekme = ad;
-    for (const [sekme, panel] of [["sekmeAd", "panelAd"], ["sekmeMalzeme", "panelMalzeme"]]) {
-      const secili = (ad === "ad") === (sekme === "sekmeAd");
-      $(sekme).setAttribute("aria-selected", secili);
-      $(sekme).tabIndex = secili ? 0 : -1;
-      $(panel).hidden = !secili;
-    }
-    $("tarif").hidden = true;
+    document.body.dataset.sekme = ad;   // görünüm (CSS) bu tek bilgiye göre değişir
+    // Ekran okuyucular için hangi sekmenin seçili olduğunu da yaz
+    $("sekmeAd").setAttribute("aria-selected", ad === "ad");
+    $("sekmeMalzeme").setAttribute("aria-selected", ad === "malzeme");
+    $("sekmeAd").tabIndex = ad === "ad" ? 0 : -1;
+    $("sekmeMalzeme").tabIndex = ad === "malzeme" ? 0 : -1;
     durumGoster("");
-    $("benzerBolum").hidden = ad !== "ad" || !$("benzerler").children.length;
-    $("oneriBolum").hidden = ad !== "malzeme" || !oneriListesi.length;
     (ad === "ad" ? $("isim") : $("malzemeGir")).focus();
   }
   $("sekmeAd").addEventListener("click", () => sekmeAc("ad"));
@@ -671,7 +692,7 @@
     let kaydirildi = devam;   // ilk sonuçlar gelince sonuç bölümüne bir kez kaydır
     $("tarif").hidden = true;
     $("onerBtn").disabled = true;
-    durumGoster("Tarifler taranıyor…");
+    durumGoster("Tarifler taranıyor…", false, "malzeme");
 
     // NOT: Sunucuya malzemeler virgülle ayrılarak gönderilir: /api/oner?malzemeler=yumurta,domates
     const parametreler = new URLSearchParams({ malzemeler: malzemeler.join(","), temel: $("temel").checked ? 1 : 0 });
@@ -681,9 +702,9 @@
       oneriListesi = [...oneriListesi.filter((x) => x.url !== o.url), o];
     };
 
-    oneriYayini.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj));
+    oneriYayini.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj, false, "malzeme"));
     const kaydir = () => {
-      if (!kaydirildi && oneriListesi.length) {
+      if (!kaydirildi && oneriListesi.length && aktifSekme === "malzeme") {
         kaydirildi = true;
         $("oneriBolum").scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -695,12 +716,13 @@
       bitir();
       onerileriCiz(daha_var);
       durumGoster(oneriListesi.length ? "" :
-        "Bu malzemelerle eşleşen yemek bulunamadı. Başka malzeme ekle ya da yazımını kontrol et.", !oneriListesi.length);
+        "Bu malzemelerle eşleşen yemek bulunamadı. Başka malzeme ekle ya da yazımını kontrol et.",
+        !oneriListesi.length, "malzeme");
     });
-    oneriYayini.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true); bitir(); });
+    oneriYayini.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true, "malzeme"); bitir(); });
     oneriYayini.onerror = () => {
       if (!oneriYayini) return;
-      durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true);
+      durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true, "malzeme");
       bitir();
     };
   }
