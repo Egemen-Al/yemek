@@ -1,0 +1,16 @@
+# Python'un kendi oluşturduğu geçici dosyalar
+__pycache__/
+*.pyc
+
+# Sanal ortam
+.venv/
+venv/
+
+# Program çalışınca oluşan kişisel veriler (herkeste kendiliğinden oluşur)
+veri/tarifler.json
+veri/fotograflar/
+
+# İşletim sistemi dosyaları
+.DS_Store
+Thumbs.db
+desktop.ini

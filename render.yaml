@@ -1,0 +1,11 @@
+# Render.com ayar dosyası — siteyi internette çalıştırmak için.
+# Render bu dosyayı okuyup projeyi kendiliğinden kurar ve başlatır.
+services:
+  - type: web
+    name: tarif-kaziyici
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend.py
+    healthCheckPath: /api/durum

@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarif Kazıyıcı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     RENKLER — İznik çinisinden: kobalt mavisi, turkuaz, mercan kırmızısı
+     Bir rengi değiştirmek için sadece buradaki değeri değiştirmen yeterli.
+     ============================================================ */
+  :root {
+    --zemin: #EEF2F8;
+    --yuzey: #FFFFFF;
+    --murekkep: #15203A;
+    --soluk: #59627A;
+    --cizgi: #D5DCE8;
+    --kobalt: #1C3D8F;
+    --turkuaz: #17807E;
+    --mercan: #C4382A;
+    --mercan-koyu: #A42C20;
+    --cini: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Crect width='88' height='88' fill='%23F5F8FC'/%3E%3Cg transform='translate(44 44)'%3E%3Cg fill='%231C3D8F'%3E%3Cellipse cy='-16' rx='6' ry='14'/%3E%3Cellipse cy='-16' rx='6' ry='14' transform='rotate(90)'/%3E%3Cellipse cy='-16' rx='6' ry='14' transform='rotate(180)'/%3E%3Cellipse cy='-16' rx='6' ry='14' transform='rotate(270)'/%3E%3C/g%3E%3Cg fill='%2317807E'%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(45)'/%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(135)'/%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(225)'/%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(315)'/%3E%3C/g%3E%3Ccircle r='7' fill='%23C4382A'/%3E%3Ccircle r='2.6' fill='%23F5F8FC'/%3E%3C/g%3E%3Cg fill='%23C4382A'%3E%3Ccircle cx='0' cy='0' r='4'/%3E%3Ccircle cx='88' cy='0' r='4'/%3E%3Ccircle cx='0' cy='88' r='4'/%3E%3Ccircle cx='88' cy='88' r='4'/%3E%3C/g%3E%3Cg fill='%231C3D8F' opacity='.35'%3E%3Ccircle cx='44' cy='0' r='2'/%3E%3Ccircle cx='0' cy='44' r='2'/%3E%3Ccircle cx='88' cy='44' r='2'/%3E%3Ccircle cx='44' cy='88' r='2'/%3E%3C/g%3E%3C/svg%3E");
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --zemin: #0E1526;
+      --yuzey: #16203A;
+      --murekkep: #E7ECF6;
+      --soluk: #9BA6BF;
+      --cizgi: #2A3756;
+      --kobalt: #8FAEF5;
+      --turkuaz: #5CC6C2;
+      --mercan: #E2604F;
+      --mercan-koyu: #C94A3A;
+      --cini: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Crect width='88' height='88' fill='%23132045'/%3E%3Cg transform='translate(44 44)'%3E%3Cg fill='%233E63C4'%3E%3Cellipse cy='-16' rx='6' ry='14'/%3E%3Cellipse cy='-16' rx='6' ry='14' transform='rotate(90)'/%3E%3Cellipse cy='-16' rx='6' ry='14' transform='rotate(180)'/%3E%3Cellipse cy='-16' rx='6' ry='14' transform='rotate(270)'/%3E%3C/g%3E%3Cg fill='%232A9E9B'%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(45)'/%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(135)'/%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(225)'/%3E%3Cellipse cy='-13' rx='4' ry='10' transform='rotate(315)'/%3E%3C/g%3E%3Ccircle r='7' fill='%23E2604F'/%3E%3Ccircle r='2.6' fill='%23132045'/%3E%3C/g%3E%3Cg fill='%23E2604F'%3E%3Ccircle cx='0' cy='0' r='4'/%3E%3Ccircle cx='88' cy='0' r='4'/%3E%3Ccircle cx='0' cy='88' r='4'/%3E%3Ccircle cx='88' cy='88' r='4'/%3E%3C/g%3E%3C/svg%3E");
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--zemin);
+    color: var(--murekkep);
+    font: 16px/1.55 "Figtree", system-ui, sans-serif;
+  }
+  .kap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--turkuaz); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  .serif { font-family: "Young Serif", Georgia, serif; font-weight: 400; }
+
+  /* ---------- ÇİNİ BAŞLIK + ARAMA ---------- */
+  .cini-bant {
+    background-image: var(--cini);
+    background-size: 88px 88px;
+    border-bottom: 6px solid var(--kobalt);
+    padding: 56px 0 56px;
+  }
+  .arama-kutu {
+    background: var(--yuzey);
+    border-radius: 16px;
+    padding: 30px 34px 26px;
+    max-width: 820px;
+  }
+  h1 {
+    font-family: "Young Serif", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5vw, 3.3rem);
+    line-height: 1.05;
+    margin: 0 0 8px;
+    color: var(--kobalt);
+    letter-spacing: -0.01em;
+  }
+  .arama-kutu > p { margin: 0 0 20px; color: var(--soluk); max-width: 60ch; }
+  .arama-kutu a { color: inherit; }
+  .arama-form { display: flex; gap: 10px; }
+  .arama-form input {
+    flex: 1; min-width: 0; height: 56px; padding: 0 18px;
+    font-size: 1.15rem; border: 2px solid var(--cizgi); border-radius: 10px; background: var(--zemin);
+  }
+  .arama-form input:focus { border-color: var(--kobalt); outline: none; }
+  .btn {
+    height: 56px; padding: 0 26px; border-radius: 10px; border: 0;
+    font-weight: 700; font-size: 1.05rem; cursor: pointer; white-space: nowrap;
+  }
+  .btn-ana { background: var(--mercan); color: #fff; }
+  .btn-ana:hover { background: var(--mercan-koyu); }
+  .btn-ana:disabled { opacity: .6; cursor: progress; }
+  .ornekler { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; font-size: .92rem; color: var(--soluk); }
+  .ornek {
+    border: 1.5px solid var(--cizgi); background: transparent; border-radius: 999px;
+    padding: 4px 12px; cursor: pointer; font-size: .92rem;
+  }
+  .ornek:hover { border-color: var(--turkuaz); color: var(--turkuaz); }
+  .dizin-durum { margin-top: 14px; font-size: .86rem; color: var(--soluk); }
+
+  /* ---------- DURUM MESAJI ---------- */
+  .durum {
+    display: flex; align-items: center; gap: 12px;
+    margin: 32px 0 0; padding: 16px 20px; border-radius: 10px; background: var(--yuzey);
+  }
+  .durum.hata { border-left: 4px solid var(--mercan); }
+  .donen {
+    width: 22px; height: 22px; flex: none; border-radius: 50%;
+    border: 3px solid var(--cizgi); border-top-color: var(--turkuaz);
+    animation: don .8s linear infinite;
+  }
+  .durum.hata .donen { display: none; }
+  @keyframes don { to { transform: rotate(360deg); } }
+
+  /* ---------- TARİF GÖRÜNÜMÜ ---------- */
+  .tarif {
+    margin-top: 32px; background: var(--yuzey); border-radius: 18px; overflow: hidden;
+    animation: belir .4s ease-out;
+  }
+  @keyframes belir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .tarif-ust { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+  .tarif-foto { width: 100%; height: 100%; min-height: 340px; max-height: 560px; object-fit: cover; display: block; }
+  .tarif-baslik { padding: 34px 38px 30px; display: flex; flex-direction: column; }
+  .tarif-kategori { font-weight: 700; color: var(--turkuaz); font-size: .92rem; }
+  .tarif h2 {
+    font-family: "Young Serif", Georgia, serif; font-weight: 400;
+    font-size: clamp(2rem, 4.2vw, 3rem); line-height: 1.05; margin: 6px 0 14px; color: var(--kobalt);
+  }
+  .aciklama { color: var(--soluk); margin: 0 0 22px; max-width: 60ch; }
+  .olgular {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: auto 0 0; border-top: 1.5px solid var(--cizgi);
+  }
+  .olgular div { padding: 11px 10px 11px 0; border-bottom: 1.5px solid var(--cizgi); }
+  .olgular dt { font-size: .8rem; color: var(--soluk); font-weight: 600; }
+  .olgular dd { margin: 2px 0 0; font-weight: 600; }
+  .puan { color: var(--mercan); }
+
+  .tarif-govde { display: grid; grid-template-columns: minmax(240px, 1fr) 1.7fr; gap: 44px; padding: 36px 38px 40px; }
+  .tarif-govde h3, .puf h3 { font-family: "Young Serif", Georgia, serif; font-weight: 400; font-size: 1.45rem; margin: 0 0 12px; }
+  .grup-adi { font-weight: 700; font-size: .9rem; color: var(--turkuaz); margin: 18px 0 4px; padding-top: 14px; border-top: 1.5px solid var(--cizgi); }
+  .grup-adi.ilk { margin-top: 0; padding-top: 0; border-top: 0; }
+  .adim-foto { display: block; width: 100%; max-width: 420px; aspect-ratio: 600 / 315; object-fit: cover; border-radius: 10px; margin-top: 10px; background: var(--cizgi); }
+  .malzeme { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; cursor: pointer; }
+  .malzeme input { margin-top: 4px; width: 17px; height: 17px; accent-color: var(--turkuaz); flex: none; }
+  .malzeme input:checked + span { text-decoration: line-through; color: var(--soluk); }
+  .adimlar { margin: 0; padding: 0; list-style: none; counter-reset: adim; }
+  .adimlar li { counter-increment: adim; position: relative; padding: 0 0 18px 46px; max-width: 68ch; }
+  .adimlar li::before {
+    content: counter(adim); position: absolute; left: 0; top: 0;
+    width: 30px; height: 30px; border-radius: 50%; background: var(--kobalt); color: var(--yuzey);
+    display: grid; place-items: center; font-weight: 700; font-size: .9rem;
+  }
+
+  /* Püf noktaları: turkuaz zeminli ayrı bir şerit */
+  .puf { margin: 0 38px 38px; padding: 26px 30px; border-radius: 14px; background: color-mix(in srgb, var(--turkuaz) 10%, var(--yuzey)); }
+  .puf h3 { color: var(--turkuaz); }
+  .puf details { border-top: 1.5px solid color-mix(in srgb, var(--turkuaz) 25%, transparent); padding: 12px 0; }
+  .puf details:first-of-type { border-top: 0; }
+  .puf summary { cursor: pointer; font-weight: 600; }
+  .puf details p { margin: 8px 0 0; max-width: 72ch; }
+  .tarif-alt { padding: 0 38px 32px; }
+  .kaynak { color: var(--kobalt); font-weight: 600; }
+
+  /* ---------- BENZER / ÖNCEKİ TARİFLER ---------- */
+  .bolum { margin-top: 52px; }
+  .bolum-ust { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; margin-bottom: 16px; }
+  .bolum h2 { font-family: "Young Serif", Georgia, serif; font-weight: 400; font-size: 1.6rem; margin: 0; }
+  .bolum-ust .bosluk { flex: 1; }
+  .kucuk-btn {
+    height: 38px; padding: 0 14px; border-radius: 8px; font-weight: 600; cursor: pointer;
+    background: transparent; border: 1.5px solid var(--cizgi);
+  }
+  .kucuk-btn:hover { border-color: var(--kobalt); }
+  .izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 28px 22px; }
+  .kart { all: unset; display: flex; flex-direction: column; gap: 6px; cursor: pointer; border-radius: 12px; }
+  .kart:focus-visible { outline: 3px solid var(--turkuaz); outline-offset: 4px; }
+  .kart img { aspect-ratio: 4 / 3; width: 100%; object-fit: cover; border-radius: 12px; background: var(--cizgi); display: block; margin-bottom: 4px; }
+  .kart strong { font-family: "Young Serif", Georgia, serif; font-weight: 400; font-size: 1.12rem; line-height: 1.25; }
+  .kart:hover strong { color: var(--kobalt); text-decoration: underline; text-underline-offset: 3px; }
+  .kart small { color: var(--soluk); font-size: .86rem; line-height: 1.4; }
+  .bos { color: var(--soluk); padding: 26px 0; grid-column: 1 / -1; margin: 0; }
+
+  /* ---------- SEKMELER (çininin üstüne oturan dosya sekmeleri) ---------- */
+  .sekmeler { display: flex; gap: 6px; max-width: 820px; }
+  .sekme {
+    height: 50px; padding: 0 24px; border: 0; border-radius: 14px 14px 0 0; cursor: pointer;
+    background: color-mix(in srgb, var(--yuzey) 72%, transparent); color: var(--soluk);
+    font-weight: 700; font-size: 1rem;
+  }
+  .sekme:hover { color: var(--kobalt); }
+  .sekme[aria-selected="true"] { background: var(--yuzey); color: var(--kobalt); }
+  .sekmeler + .arama-kutu { border-top-left-radius: 0; }
+
+  /* ---------- MALZEME ETİKETLERİ (çip) ---------- */
+  .cip-kutu {
+    flex: 1; min-width: 0; min-height: 56px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    padding: 7px 10px; border: 2px solid var(--cizgi); border-radius: 10px; background: var(--zemin); cursor: text;
+  }
+  .cip-kutu:focus-within { border-color: var(--kobalt); }
+  .cip-kutu input { flex: 1; min-width: 150px; height: 38px; border: 0; background: transparent; font-size: 1.1rem; outline: none; }
+  .cip {
+    display: inline-flex; align-items: center; gap: 2px; padding: 4px 4px 4px 12px; border-radius: 999px;
+    background: var(--kobalt); color: var(--yuzey); font-weight: 600; font-size: .95rem;
+  }
+  .cip button { width: 26px; height: 26px; border: 0; border-radius: 50%; background: transparent; color: inherit; font-size: 1.15rem; line-height: 1; cursor: pointer; }
+  .cip button:hover { background: color-mix(in srgb, var(--yuzey) 22%, transparent); }
+  .ornek.eklendi { border-color: var(--kobalt); color: var(--kobalt); background: color-mix(in srgb, var(--kobalt) 8%, transparent); }
+  .kutucuk { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: .92rem; color: var(--soluk); cursor: pointer; width: fit-content; }
+  .kutucuk input { width: 17px; height: 17px; accent-color: var(--kobalt); }
+
+  /* ---------- ÖNERİ KARTLARI ---------- */
+  .bolum-alt { color: var(--soluk); margin: -8px 0 18px; }
+  .olcer { height: 6px; border-radius: 3px; background: var(--cizgi); overflow: hidden; margin-top: 2px; }
+  .olcer span { display: block; height: 100%; background: var(--turkuaz); }
+  .oneri-sayi { font-size: .88rem; font-weight: 700; }
+  .kart .kullanilan { color: var(--turkuaz); }
+  .kart .eksik { color: var(--mercan); }
+  .kart .tam { color: var(--turkuaz); font-weight: 700; }
+  .eksik-rozet {
+    margin-left: 8px; padding: 0 8px; border: 1.5px solid currentColor; border-radius: 999px;
+    color: var(--mercan); font-size: .74rem; font-weight: 700; white-space: nowrap;
+  }
+  .daha-satir { grid-column: 1 / -1; display: flex; justify-content: center; padding-top: 8px; }
+  .daha-satir .kucuk-btn { height: 46px; padding: 0 22px; }
+  .geri { margin-left: 18px; background: none; border: 0; padding: 0; color: var(--turkuaz); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  footer { padding: 70px 0 40px; color: var(--soluk); font-size: .86rem; }
+
+  @media (max-width: 860px) {
+    .cini-bant { padding: 32px 0; }
+    .arama-kutu { padding: 22px 20px; }
+    .sekme { flex: 1; padding: 0 10px; font-size: .92rem; }
+    .arama-form { flex-direction: column; }
+    .tarif-ust { grid-template-columns: 1fr; }
+    .tarif-foto { min-height: 0; aspect-ratio: 4 / 3; }
+    .tarif-baslik { padding: 24px 20px; }
+    .olgular { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tarif-govde { grid-template-columns: 1fr; gap: 30px; padding: 28px 20px; }
+    .puf { margin: 0 20px 28px; padding: 20px; }
+    .tarif-alt { padding: 0 20px 26px; }
+    .izgara { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== ÇİNİ BAŞLIK + SEKMELER ===================== -->
+<header class="cini-bant">
+  <div class="kap">
+    <div class="sekmeler" role="tablist" aria-label="Arama türü">
+      <button class="sekme" role="tab" id="sekmeAd" aria-controls="panelAd" aria-selected="true" type="button">Yemek adıyla ara</button>
+      <button class="sekme" role="tab" id="sekmeMalzeme" aria-controls="panelMalzeme" aria-selected="false" type="button" tabindex="-1">Elimdekilerle öner</button>
+    </div>
+    <div class="arama-kutu">
+      <h1>Tarif Kazıyıcı</h1>
+
+      <!-- ===== 1. SEKME: YEMEK ADIYLA ARA ===== -->
+      <div id="panelAd" role="tabpanel" aria-labelledby="sekmeAd">
+        <p>Yemeğin adını yaz; tarifini, fotoğrafını, malzemelerini ve püf noktalarını
+          <a href="https://yemek.com/tarif/" target="_blank" rel="noopener">yemek.com</a>'dan getirsin.</p>
+
+        <form class="arama-form" id="form" role="search">
+          <input id="isim" type="search" placeholder="Örneğin: karnıyarık" aria-label="Yemek adı"
+                 autocomplete="off" autofocus>
+          <button class="btn btn-ana" id="bulBtn" type="submit">Tarifi bul</button>
+        </form>
+
+        <!-- NOT: ÖRNEK YEMEKLER — tıklanınca aranır. Buraya istediğin yemeği ekleyebilirsin. -->
+        <div class="ornekler" id="ornekYemekler">
+          Dene:
+          <button class="ornek" type="button">Karnıyarık</button>
+          <button class="ornek" type="button">Mercimek çorbası</button>
+          <button class="ornek" type="button">İskender</button>
+          <button class="ornek" type="button">Yaprak sarma</button>
+          <button class="ornek" type="button">Sütlaç</button>
+          <button class="ornek" type="button">Tiramisu</button>
+        </div>
+      </div>
+
+      <!-- ===== 2. SEKME: ELİMDEKİLERLE ÖNER ===== -->
+      <div id="panelMalzeme" role="tabpanel" aria-labelledby="sekmeMalzeme" hidden>
+        <p>Evde ne varsa ekle; bunlarla yapabileceğin yemekleri, neyin eksik olduğuyla birlikte göstersin.</p>
+
+        <form class="arama-form" id="malzemeForm">
+          <div class="cip-kutu" id="cipKutu">
+            <input id="malzemeGir" type="text" placeholder="Malzeme yaz, Enter'a bas" aria-label="Malzeme ekle" autocomplete="off">
+          </div>
+          <button class="btn btn-ana" id="onerBtn" type="submit">Yemek öner</button>
+        </form>
+
+        <!-- NOT: HIZLI EKLE — tıklanınca malzeme listesine eklenir. İstediğin malzemeyi ekleyebilirsin. -->
+        <div class="ornekler" id="hizliMalzemeler">
+          Hızlı ekle:
+          <button class="ornek" type="button">Yumurta</button>
+          <button class="ornek" type="button">Domates</button>
+          <button class="ornek" type="button">Soğan</button>
+          <button class="ornek" type="button">Biber</button>
+          <button class="ornek" type="button">Patates</button>
+          <button class="ornek" type="button">Patlıcan</button>
+          <button class="ornek" type="button">Tavuk</button>
+          <button class="ornek" type="button">Kıyma</button>
+          <button class="ornek" type="button">Pirinç</button>
+          <button class="ornek" type="button">Makarna</button>
+          <button class="ornek" type="button">Peynir</button>
+          <button class="ornek" type="button">Yoğurt</button>
+          <button class="ornek" type="button">Süt</button>
+          <button class="ornek" type="button">Mercimek</button>
+        </div>
+        <!-- NOT: Bu kutu işaretliyse tuz, yağ, un, şeker, baharat gibi malzemeler eksik sayılmaz.
+             Listesi backend.py içindeki TEMEL_MALZEMELER ayarında. -->
+        <label class="kutucuk"><input id="temel" type="checkbox" checked> Tuz, yağ, un, şeker ve baharatlar evde var say</label>
+      </div>
+
+      <div class="dizin-durum" id="dizinDurum" aria-live="polite"></div>
+    </div>
+  </div>
+</header>
+
+<main class="kap">
+  <div class="durum" id="durum" hidden role="status"><span class="donen"></span><span id="durumYazi"></span></div>
+
+  <!-- Bulunan tarif buraya çizilir -->
+  <article class="tarif" id="tarif" hidden></article>
+
+  <!-- Malzemeyle öneri sonuçları (2. sekme) -->
+  <section class="bolum" id="oneriBolum" hidden>
+    <div class="bolum-ust"><h2>Bu malzemelerle yapabileceklerin</h2></div>
+    <p class="bolum-alt" id="oneriAlt"></p>
+    <div class="izgara" id="oneriler"></div>
+  </section>
+
+  <section class="bolum" id="benzerBolum" hidden>
+    <div class="bolum-ust"><h2>Benzer tarifler</h2></div>
+    <div class="izgara" id="benzerler"></div>
+  </section>
+
+  <section class="bolum" id="gecmisBolum">
+    <div class="bolum-ust">
+      <h2>Daha önce bulduğun tarifler</h2>
+      <span class="bosluk"></span>
+      <button class="kucuk-btn" id="jsonBtn" type="button">JSON indir</button>
+      <button class="kucuk-btn" id="temizleBtn" type="button">Listeyi temizle</button>
+    </div>
+    <div class="izgara" id="gecmis"></div>
+  </section>
+</main>
+
+<footer class="kap">Tarifler ve fotoğraflar yemek.com'a aittir. Bulunan tarifler ve fotoğrafları “veri” klasörüne kaydedilir.</footer>
+
+<script>
+  // ============================================================
+  //  DEĞİŞKENLER
+  // ============================================================
+  let gecmis = [];       // Daha önce bulunan tarifler (tarifler.json)
+  let yayin = null;      // Açık olan canlı bağlantı (EventSource)
+
+  const $ = (id) => document.getElementById(id);
+
+  // NOT: Metni HTML'e koymadan önce güvenli hale getirir (< > & gibi karakterler bozmasın)
+  function guvenli(metin) {
+    return String(metin ?? "").replace(/[&<>"']/g, (k) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[k]));
+  }
+
+  // NOT: Fotoğraf indirildiyse bilgisayardaki dosyayı, indirilmediyse sitedeki adresini kullanır
+  function fotoAdresi(t) {
+    if (t.foto_dosyasi) return "/" + t.foto_dosyasi.replace(/\\/g, "/");
+    return t.foto_url || "";
+  }
+
+  // Bilgisayardaki fotoğraf açılmazsa internetteki adresine geç
+  function yedekFoto(img, url) {
+    if (img.dataset.yedek !== "1" && url) { img.dataset.yedek = "1"; img.src = url; }
+  }
+
+  // ============================================================
+  //  DURUM MESAJI
+  // ============================================================
+  function durumGoster(metin, hata = false) {
+    $("durum").hidden = !metin;
+    $("durum").classList.toggle("hata", hata);
+    $("durumYazi").textContent = metin || "";
+  }
+
+  // ============================================================
+  //  TARİFİ ÇİZ
+  // ============================================================
+  // NOT: eksikler verilirse (öneri sekmesi), sende olmayan malzemelerin yanına "eksik" yazılır
+  function tarifiGoster(t, kaydir = true, eksikler = null) {
+    const olgular = [
+      ["Hazırlık", t.hazirlik_suresi], ["Pişirme", t.pisirme_suresi], ["Toplam süre", t.toplam_sure],
+      ["Porsiyon", t.porsiyon], ["Kalori", t.kalori],
+      ["Puan", t.puan ? `<span class="puan">★ ${guvenli(t.puan)}</span> / 5 (${guvenli(t.oy_sayisi)} oy)` : "Puanlanmamış"],
+      ["Mutfak", t.mutfak], ["Yazar", t.yazar], ["Yayın tarihi", t.yayin_tarihi],
+    ].filter(([, d]) => d)
+     .map(([e, d]) => `<div><dt>${e}</dt><dd>${e === "Puan" ? d : guvenli(d)}</dd></div>`).join("");
+
+    // NOT: Malzemeler sitede gruplar halinde ("Karnıyarık için", "Kızartmak için").
+    // Birden fazla grup varsa her grubun adı başlık olarak yazılır.
+    const gruplar = Object.entries(t.malzeme_gruplari || { Malzemeler: t.malzemeler || [] });
+    const malzemeler = gruplar.map(([ad, liste], i) => `
+      ${gruplar.length > 1 ? `<div class="grup-adi${i === 0 ? " ilk" : ""}">${guvenli(ad)}</div>` : ""}
+      ${liste.map((m) => `<label class="malzeme"><input type="checkbox"><span>${guvenli(m)}${
+        eksikler && eksikler.has(m) ? '<span class="eksik-rozet">eksik</span>' : ""}</span></label>`).join("")}
+    `).join("");
+
+    // NOT: Her adımın fotoğrafı varsa (adim_fotolari), adımın altında gösterilir
+    const adimFotolari = t.adim_fotolari || [];
+    const adimlar = (t.yapilis || []).map((a, i) => `<li>${guvenli(a)}${
+      adimFotolari[i] ? `<img class="adim-foto" src="${guvenli(adimFotolari[i])}" alt="${i + 1}. adım" loading="lazy">` : ""}</li>`).join("");
+
+    // NOT: Püf noktaları sitede "sık sorulan sorular" olarak geliyor; soruya tıklayınca cevap açılır
+    const puf = (t.puf_noktalari || []).length ? `
+      <section class="puf"><h3>Püf noktaları</h3>
+        ${t.puf_noktalari.map((s, i) => `<details${i === 0 ? " open" : ""}><summary>${guvenli(s.soru)}</summary><p>${guvenli(s.cevap)}</p></details>`).join("")}
+      </section>` : "";
+
+    $("tarif").innerHTML = `
+      <div class="tarif-ust">
+        <img class="tarif-foto" src="${guvenli(fotoAdresi(t))}" alt="${guvenli(t.isim)}"
+             onerror="yedekFoto(this, ${guvenli(JSON.stringify(t.foto_url || ""))})">
+        <div class="tarif-baslik">
+          ${t.kategori ? `<span class="tarif-kategori">${guvenli(t.kategori)}</span>` : ""}
+          <h2>${guvenli(t.isim)}</h2>
+          ${t.aciklama ? `<p class="aciklama">${guvenli(t.aciklama)}</p>` : ""}
+          <dl class="olgular">${olgular}</dl>
+        </div>
+      </div>
+      <div class="tarif-govde">
+        <div><h3>Malzemeler</h3>${malzemeler || '<p class="bos">Malzeme bilgisi yok.</p>'}</div>
+        <div><h3>Yapılışı</h3><ol class="adimlar">${adimlar}</ol></div>
+      </div>
+      ${puf}
+      <div class="tarif-alt"><a class="kaynak" href="${guvenli(t.url)}" target="_blank" rel="noopener">Tarifin yemek.com sayfasını aç</a>${
+        eksikler ? '<button class="geri" type="button" onclick="$(\'oneriBolum\').scrollIntoView({behavior:\'smooth\'})">Diğer önerilere dön</button>' : ""}</div>`;
+    $("tarif").hidden = false;
+    // Animasyonu her yeni tarifte tekrar oynat
+    $("tarif").style.animation = "none"; void $("tarif").offsetWidth; $("tarif").style.animation = "";
+    if (kaydir) $("tarif").scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Geçmişe ekle (aynısı varsa en üste taşı)
+    gecmis = [t, ...gecmis.filter((x) => x.url !== t.url)];
+    gecmisiCiz();
+  }
+
+  // ============================================================
+  //  KARTLAR (benzer tarifler + geçmiş)
+  // ============================================================
+  function kartHtml({ url, ad, alt, foto, yedek, tembel = true }) {
+    return `
+      <button class="kart" type="button" data-url="${guvenli(url)}">
+        <img src="${guvenli(foto)}" alt="" loading="${tembel ? "lazy" : "eager"}" onerror="yedekFoto(this, ${guvenli(JSON.stringify(yedek || ""))})">
+        <strong>${guvenli(ad)}</strong>
+        ${alt ? `<small>${guvenli(alt)}</small>` : ""}
+      </button>`;
+  }
+
+  function benzerleriCiz(liste) {
+    $("benzerBolum").hidden = !liste.length;
+    $("benzerler").innerHTML = liste.map((b) => kartHtml({
+      url: b.url, ad: b.ad, foto: b.foto, tembel: false,
+      // Sitedeki başlık yemeğin adından farklıysa (ör. "Bol Kıymasıyla Karnıyarık") altına yaz
+      alt: b.baslik && b.baslik.trim() !== b.ad ? b.baslik : "",
+    })).join("");
+  }
+
+  function gecmisiCiz() {
+    $("gecmis").innerHTML = gecmis.length
+      ? gecmis.map((t) => kartHtml({
+          url: t.url, ad: t.isim, foto: fotoAdresi(t), yedek: t.foto_url,
+          alt: [t.toplam_sure, t.puan ? `★ ${t.puan}` : ""].filter(Boolean).join(", "),
+        })).join("")
+      : `<p class="bos">Henüz tarif yok. Yukarıya bir yemek adı yazıp “Tarifi bul”a bas.</p>`;
+  }
+
+  // Benzer tarif kartına tıklayınca: o tarifi sunucudan getir
+  $("benzerler").addEventListener("click", async (e) => {
+    const kart = e.target.closest(".kart");
+    if (!kart) return;
+    durumGoster("Tarif getiriliyor…");
+    try {
+      const cevap = await fetch("/api/tarif?url=" + encodeURIComponent(kart.dataset.url));
+      const veri = await cevap.json();
+      if (veri.hata) return durumGoster(veri.hata, true);
+      durumGoster("");
+      tarifiGoster(veri);
+    } catch {
+      durumGoster("Sunucuya bağlanılamadı. backend.py açık mı?", true);
+    }
+  });
+
+  // Geçmişteki karta tıklayınca: kayıtlı tarifi hemen göster (internete gitmeden)
+  $("gecmis").addEventListener("click", (e) => {
+    const kart = e.target.closest(".kart");
+    if (!kart) return;
+    const t = gecmis.find((x) => x.url === kart.dataset.url);
+    if (t) { durumGoster(""); benzerleriCiz([]); tarifiGoster(t); }
+  });
+
+  // ============================================================
+  //  ARAMA — sunucuya yemek adını gönderip sonucu canlı alır
+  // ============================================================
+  function ara(isim) {
+    isim = isim.trim();
+    if (!isim) { $("isim").focus(); return; }
+    if (yayin) yayin.close();
+
+    $("bulBtn").disabled = true;
+    durumGoster(`“${isim}” aranıyor…`);
+    benzerleriCiz([]);
+    let tarifGeldi = false;
+
+    // NOT: EventSource, sunucudan gelen canlı olayları dinler:
+    //   "durum"     -> ne yapıldığını anlatan mesaj
+    //   "tarif"     -> bulunan tarif (adı, fotoğrafı, malzemeleri, yapılışı, püf noktaları...)
+    //   "benzerler" -> benzer isimli diğer tarifler
+    //   "bitti" / "hata"
+    yayin = new EventSource("/api/ara?isim=" + encodeURIComponent(isim));
+    const bitir = () => { if (yayin) yayin.close(); yayin = null; $("bulBtn").disabled = false; };
+
+    yayin.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj));
+    yayin.addEventListener("tarif", (ev) => {
+      tarifGeldi = true;
+      tarifiGoster(JSON.parse(ev.data));
+      durumGoster("");
+    });
+    yayin.addEventListener("benzerler", (ev) => benzerleriCiz(JSON.parse(ev.data)));
+    yayin.addEventListener("bitti", () => { durumGoster(""); bitir(); dizinDurumunuSor(); });
+    yayin.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true); bitir(); });
+    yayin.onerror = () => {
+      if (!yayin) return;
+      if (!tarifGeldi) durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true);
+      bitir();
+    };
+  }
+
+  $("form").addEventListener("submit", (e) => { e.preventDefault(); ara($("isim").value); });
+  document.querySelectorAll("#ornekYemekler .ornek").forEach((b) =>
+    b.addEventListener("click", () => { $("isim").value = b.textContent; ara(b.textContent); }));
+
+  // ============================================================
+  //  SEKMELER
+  // ============================================================
+  // NOT: Sekme değişince ilgili panel ve sonuç bölümleri açılır, diğerleri gizlenir
+  let aktifSekme = "ad";
+  function sekmeAc(ad) {
+    aktifSekme = ad;
+    for (const [sekme, panel] of [["sekmeAd", "panelAd"], ["sekmeMalzeme", "panelMalzeme"]]) {
+      const secili = (ad === "ad") === (sekme === "sekmeAd");
+      $(sekme).setAttribute("aria-selected", secili);
+      $(sekme).tabIndex = secili ? 0 : -1;
+      $(panel).hidden = !secili;
+    }
+    $("tarif").hidden = true;
+    durumGoster("");
+    $("benzerBolum").hidden = ad !== "ad" || !$("benzerler").children.length;
+    $("oneriBolum").hidden = ad !== "malzeme" || !oneriListesi.length;
+    (ad === "ad" ? $("isim") : $("malzemeGir")).focus();
+  }
+  $("sekmeAd").addEventListener("click", () => sekmeAc("ad"));
+  $("sekmeMalzeme").addEventListener("click", () => sekmeAc("malzeme"));
+  // Klavyeyle sağ/sol ok tuşlarıyla sekme değiştirme
+  document.querySelector(".sekmeler").addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      sekmeAc(aktifSekme === "ad" ? "malzeme" : "ad");
+      $(aktifSekme === "ad" ? "sekmeAd" : "sekmeMalzeme").focus();
+    }
+  });
+
+  // ============================================================
+  //  MALZEME ETİKETLERİ (çip)
+  // ============================================================
+  let malzemeler = [];   // Kullanıcının elindeki malzemeler: ["yumurta", "domates", ...]
+  const kucuk = (m) => m.toLocaleLowerCase("tr").trim();
+
+  function malzemeEkle(metin) {
+    // NOT: "domates, biber, soğan" gibi virgüllü yazılırsa hepsi ayrı ayrı eklenir
+    for (const parca of metin.split(",")) {
+      const m = kucuk(parca);
+      if (m && !malzemeler.includes(m)) malzemeler.push(m);
+    }
+    ciplerCiz();
+  }
+  function malzemeCikar(m) {
+    malzemeler = malzemeler.filter((x) => x !== m);
+    ciplerCiz();
+  }
+  function ciplerCiz() {
+    $("cipKutu").querySelectorAll(".cip").forEach((c) => c.remove());
+    for (const m of malzemeler) {
+      const cip = document.createElement("span");
+      cip.className = "cip";
+      cip.innerHTML = `${guvenli(m)}<button type="button" aria-label="${guvenli(m)} malzemesini çıkar">×</button>`;
+      cip.querySelector("button").addEventListener("click", () => { malzemeCikar(m); $("malzemeGir").focus(); });
+      $("cipKutu").insertBefore(cip, $("malzemeGir"));
+    }
+    $("malzemeGir").placeholder = malzemeler.length ? "Başka malzeme…" : "Malzeme yaz, Enter'a bas";
+    // Hızlı ekle butonlarından eklenmiş olanları işaretle
+    document.querySelectorAll("#hizliMalzemeler .ornek").forEach((b) =>
+      b.classList.toggle("eklendi", malzemeler.includes(kucuk(b.textContent))));
+  }
+
+  $("cipKutu").addEventListener("click", () => $("malzemeGir").focus());
+  $("malzemeGir").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      if ($("malzemeGir").value.trim()) {
+        e.preventDefault();
+        malzemeEkle($("malzemeGir").value);
+        $("malzemeGir").value = "";
+      }
+      // Kutu boşken Enter'a basılırsa form gönderilir (öneri başlar)
+    } else if (e.key === "Backspace" && !$("malzemeGir").value && malzemeler.length) {
+      malzemeCikar(malzemeler[malzemeler.length - 1]);   // boşken silince son malzeme gider
+    }
+  });
+  document.querySelectorAll("#hizliMalzemeler .ornek").forEach((b) =>
+    b.addEventListener("click", () => {
+      const m = kucuk(b.textContent);
+      malzemeler.includes(m) ? malzemeCikar(m) : malzemeEkle(m);
+    }));
+
+  // ============================================================
+  //  MALZEMEYLE ÖNERİ — sunucudan önerileri canlı alır
+  // ============================================================
+  let oneriListesi = [];   // Ekrandaki öneriler
+  let oneriYayini = null;
+
+  function oneriKartHtml(o) {
+    // NOT: Eksik malzemeler kartta en fazla 4 tane yazılır, gerisi "+3 malzeme" diye özetlenir
+    const eksikYazi = o.eksik.length === 0
+      ? `<small class="tam">Hiçbir malzeme eksik değil</small>`
+      : `<small class="eksik">Eksik: ${guvenli(o.eksik.slice(0, 4).join(", "))}${
+          o.eksik.length > 4 ? ` ve ${o.eksik.length - 4} malzeme daha` : ""}</small>`;
+    return `
+      <button class="kart" type="button" data-url="${guvenli(o.url)}">
+        <img src="${guvenli(o.foto)}" alt="" loading="lazy">
+        <strong>${guvenli(o.ad)}</strong>
+        <span class="oneri-sayi">${o.toplam} malzemeden ${o.sende} tanesi sende</span>
+        <span class="olcer" aria-hidden="true"><span style="width:${o.uyum}%"></span></span>
+        <small class="kullanilan">Kullanılan: ${guvenli(o.kullanilan.join(", "))}</small>
+        ${eksikYazi}
+      </button>`;
+  }
+
+  function onerileriCiz(dahaVar = false) {
+    oneriListesi.sort((a, b) => b.puan - a.puan);
+    $("oneriBolum").hidden = false;
+    $("oneriAlt").textContent = oneriListesi.length
+      ? `${oneriListesi.length} yemek bulundu. En uygunları başta; karta tıklayınca tarifi açılır.`
+      : "";
+    $("oneriler").innerHTML = oneriListesi.length
+      ? oneriListesi.map(oneriKartHtml).join("") +
+        (dahaVar ? `<div class="daha-satir"><button class="kucuk-btn" id="dahaBtn" type="button">Daha fazla tarif tara</button></div>` : "")
+      : `<p class="bos">Henüz eşleşen yemek yok.</p>`;
+    if (dahaVar) $("dahaBtn").addEventListener("click", () => oner(true));
+  }
+
+  function oner(devam = false) {
+    if ($("malzemeGir").value.trim()) { malzemeEkle($("malzemeGir").value); $("malzemeGir").value = ""; }
+    if (!malzemeler.length) {
+      durumGoster("Önce elindeki malzemelerden en az birini ekle.", true);
+      $("malzemeGir").focus();
+      return;
+    }
+    if (oneriYayini) oneriYayini.close();
+    if (!devam) oneriListesi = [];
+    let kaydirildi = devam;   // ilk sonuçlar gelince sonuç bölümüne bir kez kaydır
+    $("tarif").hidden = true;
+    $("onerBtn").disabled = true;
+    durumGoster("Tarifler taranıyor…");
+
+    // NOT: Sunucuya malzemeler virgülle ayrılarak gönderilir: /api/oner?malzemeler=yumurta,domates
+    const parametreler = new URLSearchParams({ malzemeler: malzemeler.join(","), temel: $("temel").checked ? 1 : 0 });
+    oneriYayini = new EventSource("/api/oner?" + parametreler);
+    const bitir = () => { if (oneriYayini) oneriYayini.close(); oneriYayini = null; $("onerBtn").disabled = false; };
+    const ekle = (o) => {
+      oneriListesi = [...oneriListesi.filter((x) => x.url !== o.url), o];
+    };
+
+    oneriYayini.addEventListener("durum", (ev) => durumGoster(JSON.parse(ev.data).mesaj));
+    const kaydir = () => {
+      if (!kaydirildi && oneriListesi.length) {
+        kaydirildi = true;
+        $("oneriBolum").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+    oneriYayini.addEventListener("oneriler", (ev) => { JSON.parse(ev.data).forEach(ekle); onerileriCiz(); kaydir(); });
+    oneriYayini.addEventListener("oneri", (ev) => { ekle(JSON.parse(ev.data)); onerileriCiz(); kaydir(); });
+    oneriYayini.addEventListener("bitti", (ev) => {
+      const { daha_var } = JSON.parse(ev.data);
+      bitir();
+      onerileriCiz(daha_var);
+      durumGoster(oneriListesi.length ? "" :
+        "Bu malzemelerle eşleşen yemek bulunamadı. Başka malzeme ekle ya da yazımını kontrol et.", !oneriListesi.length);
+    });
+    oneriYayini.addEventListener("hata", (ev) => { durumGoster(JSON.parse(ev.data).mesaj, true); bitir(); });
+    oneriYayini.onerror = () => {
+      if (!oneriYayini) return;
+      durumGoster("Sunucuya bağlanılamadı. backend.py açık mı? Terminali kontrol et.", true);
+      bitir();
+    };
+  }
+  $("malzemeForm").addEventListener("submit", (e) => { e.preventDefault(); oner(); });
+
+  // Öneri kartına tıklayınca: tarifi (fotoğrafıyla) getir, eksik malzemeleri işaretle
+  $("oneriler").addEventListener("click", async (e) => {
+    const kart = e.target.closest(".kart");
+    if (!kart) return;
+    const oneri = oneriListesi.find((o) => o.url === kart.dataset.url);
+    durumGoster("Tarif getiriliyor…");
+    try {
+      // Elimdeki malzemeleri de gönderiyoruz; sunucu, sayfadan yeni kazıdığı malzeme
+      // listesine göre hangilerinin eksik olduğunu hesaplayıp "eksik_satirlar" olarak döner
+      const parametreler = new URLSearchParams({
+        url: kart.dataset.url, malzemeler: malzemeler.join(","), temel: $("temel").checked ? 1 : 0 });
+      const veri = await (await fetch("/api/tarif?" + parametreler)).json();
+      if (veri.hata) return durumGoster(veri.hata, true);
+      durumGoster("");
+      tarifiGoster(veri, true, new Set(veri.eksik_satirlar || (oneri ? oneri.eksik_satirlar : [])));
+    } catch {
+      durumGoster("Sunucuya bağlanılamadı. backend.py açık mı?", true);
+    }
+  });
+
+  // ============================================================
+  //  JSON İNDİR, TEMİZLE
+  // ============================================================
+  $("jsonBtn").addEventListener("click", () => {
+    const dosya = new Blob([JSON.stringify(gecmis, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(dosya);
+    a.download = "tarifler.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  $("temizleBtn").addEventListener("click", async () => {
+    // NOT: Sadece listeyi (tarifler.json) boşaltır; indirilen fotoğraflar klasörde kalır
+    await fetch("/api/temizle", { method: "POST" });
+    gecmis = [];
+    gecmisiCiz();
+  });
+
+  // ============================================================
+  //  SAYFA AÇILINCA
+  // ============================================================
+  // Tarif listesinin (dizin) durumunu gösterir; hazır değilse 2 saniyede bir tekrar sorar
+  async function dizinDurumunuSor() {
+    try {
+      const d = await (await fetch("/api/durum")).json();
+      if (d.hata) $("dizinDurum").textContent = d.hata;
+      else if (d.hazir) $("dizinDurum").textContent = `${d.tarif_sayisi.toLocaleString("tr-TR")} tarif içinde arama yapılıyor.`;
+      else {
+        $("dizinDurum").textContent = `Tarif listesi hazırlanıyor (${d.indirilen}/${d.toplam || "?"}). İlk açılışta bir kez olur, bu sırada da arayabilirsin.`;
+        setTimeout(dizinDurumunuSor, 2000);
+      }
+    } catch { /* sunucu kapalı; aşağıdaki mesaj gösterilir */ }
+  }
+
+  async function baslat() {
+    try {
+      gecmis = await (await fetch("/api/kayitli")).json();
+      dizinDurumunuSor();
+    } catch {
+      durumGoster("Sunucuya bağlanılamadı. Bu sayfayı dosyaya çift tıklayarak değil, “python backend.py” komutuyla açmalısın.", true);
+    }
+    gecmisiCiz();
+  }
+  baslat();
+</script>
+</body>
+</html>
